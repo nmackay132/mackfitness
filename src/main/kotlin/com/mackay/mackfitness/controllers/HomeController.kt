@@ -13,8 +13,7 @@ class HomeController(
     private val logger: Logger = LoggerFactory.getLogger(HomeController::class.java)
     @GetMapping("/")
     fun index(): String {
-        logger.info("Returning message: Greetings from Spring Boot!")
-        return "Greetings from Spring Boot!"
+        return "Welcome to Mackfitness!"
     }
 
     // TODO: Replace this. Currently only for test purposes.

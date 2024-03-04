@@ -2,6 +2,11 @@ package com.mackay.mackfitness.models
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.mongodb.core.mapping.Document
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Document(collection = "activitySummaries")
 data class ActivitySummary(
@@ -105,10 +110,10 @@ data class ActivitySummary(
     val endLatlng: List<Double>,
 
     @JsonProperty("average_speed")
-    val averageSpeed: Double?,
+    val averageSpeed: Double,
 
     @JsonProperty("max_speed")
-    val maxSpeed: Double?,
+    val maxSpeed: Double,
 
     @JsonProperty("has_heartrate")
     val hasHeartrate: Boolean?,
@@ -148,13 +153,66 @@ data class ActivitySummary(
 ) {
     companion object {
         private const val KmToMiles = 0.621371
+        private const val MpsToMph = 2.23694
     }
+
+    val startDateLocalFormatted : String
+        get()  {
+            val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(startDateLocal)
+            val formatter = SimpleDateFormat("MMMM dd, yyyy")
+            return formatter.format(date)
+
+        }
 
     val totalKilometers: Double
         get() = distance / 1000
 
-    val totalMiles: Double
-        get() = totalKilometers * KmToMiles
+    val totalMiles: String
+        get() {
+            val df = DecimalFormat("#,##0.00")
+            return df.format(distance / 1000 * KmToMiles)
+        }
+
+    val movingTimeFormatted: String
+        get() {
+            val hours = movingTime / 3600
+            val minutes = (movingTime % 3600) / 60
+            val seconds = movingTime % 60
+
+            return if (hours > 0) {
+                "${hours}h ${minutes}m ${seconds}s"
+            } else {
+                "${minutes}m ${seconds}s"
+            }
+        }
+    val avgPace: String
+        get() {
+            if(distance == 0.0) {
+                return "0:00"
+            }
+
+            val distanceMiles = distance / 1609.34
+            val movingTimeMinutes = movingTime / 60.0
+            val paceMinutesPerMile = movingTimeMinutes / distanceMiles
+
+            // Convert pace to minutes and seconds format
+            val paceMinutes = paceMinutesPerMile.toInt()
+            val paceSeconds = ((paceMinutesPerMile - paceMinutes) * 60).toInt()
+            val formattedPaceSeconds = String.format("%02d", paceSeconds)
+
+            return "$paceMinutes:$formattedPaceSeconds"
+        }
+    val avgSpeedMph: String
+        get() {
+            val df = DecimalFormat("###.00")
+            return df.format(averageSpeed * MpsToMph)
+        }
+
+    val elevationGainFeet: String
+        get() {
+            val df = DecimalFormat("###,###")
+            return df.format(totalElevationGain * 3.28084)
+        }
 }
 
 data class Athlete(

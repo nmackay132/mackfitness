@@ -10,6 +10,7 @@ services:
       - mongodb_data:/data/db
 
   springboot:
+#    image: springboot:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,7 +22,6 @@ services:
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/test
       STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET}
-      # Other environment variables for MongoDB configuration if necessary
 
 volumes:
   mongodb_data:
