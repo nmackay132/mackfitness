@@ -3,10 +3,8 @@ import axios from 'axios';
 import {
     DataGrid,
     GridColDef,
-    GridSortModel,
     GridFilterModel,
     GridFilterItem,
-    GridPaginationModel
 } from '@mui/x-data-grid';
 import ActivitySummary from './ActivitySummary';
 
@@ -15,8 +13,6 @@ function ActivitySummaryList() {
     const [loading, setLoading] = useState<boolean>(true);
     const [filterColumn, setFilterColumn] = useState<string | undefined>("");
     const [filterValue, setFilterValue] = useState<string | undefined>("");
-    // const [pageSize, setPageSize] = useState<number>(25);
-    // const [currentPage, setCurrentPage] = useState<number>(0);
     const [paginationModel, setPaginationModel] = React.useState({
         pageSize: 25,
         page: 0,
@@ -58,11 +54,6 @@ function ActivitySummaryList() {
             setFilterValue(undefined);
         }
     };
-
-    // const handlePageChange = (params: GridPaginationModel) => {
-    //     setCurrentPage(params.page);
-    // };
-
 
     const columns: GridColDef[] = [
         //{ field: 'id', headerName: 'ID', width: 90 },
